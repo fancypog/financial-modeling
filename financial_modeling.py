@@ -47,14 +47,14 @@ F3 = total - len(df.index) -F2
 # F4
 # Calculate spread and daily median spread, store the latter seperately for later reference
 df['spread'] = df['NBO'] - df['NBB']
-medspread = df.groupby('DATE')['spread'].median()
+med_spread = df.groupby('DATE')['spread'].median()
 
 # Calculate the 50 times spread difference and store it as a new column
 # Here we use matching 'DATE' index to retrieve corresponding median spread from medspread Dataframe
-df['spreaddiff'] = df.apply(lambda row: row['spread'] - 50 * medspread[row['DATE']], axis=1)
+df['spread_diff'] = df.apply(lambda row: row['spread'] - 50 * medspread[row['DATE']], axis=1)
 
 # Drop items with a positve 50 times spread difference
-df = df.drop(df[df['spreaddiff'] > 0].index)
+df = df.drop(df[df['spread_diff'] > 0].index)
 F4 = total - len(df.index) - F3
 
 # F5
