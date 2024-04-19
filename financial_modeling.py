@@ -259,9 +259,8 @@ def find_and_print_BestFit(logr_1, stock_ticker, m_range, p_range, q_range):
     AIC_val = aic_df.iloc[min_aic_index]['AIC']
     # Print the result using the index above to retrieve corresponding values
     # use str() so you can concatenate everything in one print()
-    print('Best-fitted AR(m)-GJR-GARCH(p,o,q) model for ' + stock_ticker + ': AR(' + \
-          str(m_val) + ')-GJR-GARCH(' + str(p_val) + ',' + str(o_val) + ',' + str(q_val) + \
-                  ')' + ' - AIC = ' + str(AIC_val))
+    print(f"Best-fitted AR({m_val})-GJR-GARCH({p_val},{o_val},{q_val}) model for {stock_ticker}: AIC = {AIC_val}")
+
     # Store and return the parameters of the best fit model to a Series for later test and fitting
     data = {'Ticker': stock_ticker, 'm': m_val, 'p': p_val, 'o': o_val, 'q': q_val}
     best_params = pd.Series(data)
@@ -297,9 +296,10 @@ def test_leverage_effect(ret, model_data, sigLevel):
     p_value = stats.norm.sf(abs(t_stat_gamma)) * 2 
     # Compare and print the results
     if p_value < sigLevel:
-        print('For ' + ticker + ', leverage effect is present at the ' + str(sigLevel * 100) + '% significance level.' + '\n')
+        print(f"For {ticker}, leverage effect is present at the {sigLevel * 100}% significance level.\n")
     else:
-        print('For '+ ticker + ', leverage effect is not present at the ' + str(sigLevel * 100) + '% significance level.' + '\n')
+        print(f"For {ticker}, leverage effect is not present at the {sigLevel * 100}% significance level.\n")
+
 
 # Test for leverage effect
 test_leverage_effect(log_ret, best_fit_model_data1, 0.05) #for the first stock CRM
@@ -379,11 +379,10 @@ make_row(model1_fit_result, best_fit_model_data1, 1) # Plot the first row
 make_row(model2_fit_result, best_fit_model_data2, 2) # Plot the second row
 
 # Draw conclusions and print the comments
-print('From the plots above I conclude:' + '\n' + 
-      '1. The standardized residuals of both stocks have a mean close to zero and are approximately normally distributed.' + '\n'
-      '2. The autocorrelation function (ACF) of the standardized residuals drops off quickly and fluctuates around zero, indicating that there is little evidence of autocorrelation.' \
-          + '\n' +
-      '3. The fitted conditional volatility of both stocks varies over time, with CRM having a wider range of variation compared to WDA.'+ '\n')
+print(f"From the plots above I conclude:\n"
+      f"1. The standardized residuals of both stocks have a mean close to zero and are approximately normally distributed.\n"
+      f"2. The autocorrelation function (ACF) of the standardized residuals drops off quickly and fluctuates around zero, indicating that there is little evidence of autocorrelation.\n"
+      f"3. The fitted conditional volatility of both stocks varies over time, with CRM having a wider range of variation compared to WDA.\n")
 
 # =============================================================================
 # 2.4
@@ -437,8 +436,8 @@ def test_arch_lm(model_data, fitted_model_result, sigLevel):
 test_arch_lm(best_fit_model_data1, model1_fit_result, 0.05)
 test_arch_lm(best_fit_model_data2, model2_fit_result, 0.05)
 
-print('\n' + 'From the LM test above I conclude:' + '\n' + 
-      'The volatility of CRM is not fully captured by the GARCH model, and that of WBA is well captured.' )
+print(f"\nFrom the LM test above I conclude:\n"
+      f"The volatility of CRM is not fully captured by the GARCH model, and that of WBA is well captured.")
 
 
 # =============================================================================
