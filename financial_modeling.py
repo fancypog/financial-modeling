@@ -1,17 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Fri Aug 11 18:53:37 2023
-
-@author: FK
-"""
-
-# -*- coding: utf-8 -*-
-"""
-Created on Thu Apr 20 20:05:03 2023
-
-@author: FancyPog Dev
-"""
-
 
 import pandas as pd
 import numpy as np
@@ -99,7 +85,7 @@ freqs = ['1s', '2s', '3s', '4s', '5s', '10s', '20s', '30s', '40s', '50s', '1min'
              '10min', '15min', '20min', '30min']
   
 # Define functions to compute and store RV, BV and TRV
-def computeRV(ret, freqs):
+def compute_rv(ret, freqs):
     # Create a dictionary to store results in the process
     RV_dict = {}
     ret. dropna(inplace = True)
@@ -115,7 +101,7 @@ def computeRV(ret, freqs):
    
     return RV_df
 
-def computeBV(ret, freqs):
+def compute_bv(ret, freqs):
     # Create a dictionary to store results in the process
     BV_dict = {}
     ret. dropna(inplace = True)
@@ -132,7 +118,7 @@ def computeBV(ret, freqs):
     
     return BV_df 
 
-def computeTRV(ret, freqs):
+def compute_trv(ret, freqs):
     # Call the two functions above to get RV and BV dataframes
     RVdf = computeRV(ret, freqs)
     BVdf = computeBV(ret, freqs) 
@@ -143,9 +129,9 @@ def computeTRV(ret, freqs):
     return TRV
 
 # Compute and store RV, BV and TRV
-RVdf = computeRV(ret, freqs)
-BVdf = computeBV(ret, freqs) 
-TRVdf = computeTRV(ret, freqs)
+RVdf = compute_rv(ret, freqs)
+BVdf = compute_bv(ret, freqs) 
+TRVdf = compute_trv(ret, freqs)
 
 
 # =============================================================================
@@ -158,7 +144,7 @@ BV_scale = 10000* BVdf
 TRV_scale = 10000* TRVdf
 
 # Define a function to plot one volatility signiture plot
-def plotVolatility(ax, Dataframe, measure):
+def plot_volatility(ax, Dataframe, measure):
     # Compute Average RVs/ BVs/ TRVs across different days
     average = Dataframe. mean()
     time =[0] + [ pd. Timedelta(x). total_seconds() for x in average. index[1:]]
@@ -171,11 +157,11 @@ def plotVolatility(ax, Dataframe, measure):
 # Put them in a convas and set the titles
 fig, axes = plt.subplots(nrows=1,ncols=3,figsize=(16, 4))
 plt.subplots_adjust(hspace=0.3) # set the wide between the gap
-plotVolatility(axes[0], RV_scale, 'RV')
+plot_volatility(axes[0], RV_scale, 'RV')
 axes[0].set_title('RV signature plot', fontsize =12)
-plotVolatility(axes[1], BV_scale, 'BV')
+plot_volatility(axes[1], BV_scale, 'BV')
 axes[1].set_title('BV signature plot', fontsize =12)
-plotVolatility(axes[2], TRV_scale, 'TRV')
+plot_volatility(axes[2], TRV_scale, 'TRV')
 axes[2].set_title('TRV signature plot', fontsize =12)
 plt.show()
 
@@ -185,7 +171,7 @@ plt.show()
 # =============================================================================
 
 # Define a jump test function
-def jumpTest(RV, BV, sigLevel):
+def jump_test(RV, BV, sigLevel):
     # Create a Dataframe to store results in the process
     jumpdf = pd.DataFrame()
     # Slice the sampling frequecy data fro RV and BV Dataframes
@@ -204,7 +190,7 @@ def jumpTest(RV, BV, sigLevel):
     jumpdf['jump'] = np.where(pvalue < sigLevel, 'Yes', 'No')
     return jumpdf
 
-jumpdf = jumpTest(RVdf['5min'], BVdf['5min'], 0.05)
+jumpdf = jump_test(RVdf['5min'], BVdf['5min'], 0.05)
 
 
 # =============================================================================
@@ -295,7 +281,7 @@ best_fit_model_data2 = find_and_print_BestFit(logr_1, stock_list[1], m_range, p_
 # model_data is the bestfitted_model_result data stored in 2.1, from which this function retrieve ticker, m, p, o, q
 # so it makes calling this function less pain, quite automatic! hmm!
 # sigLevel is the significance level for the test
-def testLeverageEffect(ret, model_data, sigLevel):
+def test_leverage_effect(ret, model_data, sigLevel):
     # Retrieve the data from the best-fitted-model data
     ticker = model_data.Ticker
     m = model_data.m
@@ -316,15 +302,15 @@ def testLeverageEffect(ret, model_data, sigLevel):
         print('For '+ ticker + ', leverage effect is not present at the ' + str(sigLevel * 100) + '% significance level.' + '\n')
 
 # Test for leverage effect
-testLeverageEffect(log_ret, best_fit_model_data1, 0.05) #for the first stock CRM
-testLeverageEffect(log_ret, best_fit_model_data2, 0.05) #for the second stock WBA
+test_leverage_effect(log_ret, best_fit_model_data1, 0.05) #for the first stock CRM
+test_leverage_effect(log_ret, best_fit_model_data2, 0.05) #for the second stock WBA
 
 
 # =============================================================================
 # 2.3
 # =============================================================================
 # Define a function to fit the models
-def fitGarchModel(ret, model_data):
+def fit_garch_model(ret, model_data):
     model = arch_model(ret[model_data.Ticker], mean = 'AR', lags = model_data.m, vol = 'Garch', \
                        p = model_data.p, o = model_data.o, q = model_data.q, dist='StudentsT')
     return model.fit()
@@ -332,7 +318,7 @@ def fitGarchModel(ret, model_data):
 
 # Define a function to make different plots, one plot per call, of course
 # model_data is needed to retrieve the parameters so we can set titles automatically
-def makePlot(ax, model_data, fitted_model_result, category):
+def make_plot(ax, model_data, fitted_model_result, category):
     # Calculations of standard residuals
     stdresid = fitted_model_result.resid / fitted_model_result.conditional_volatility
     # Obtain fitted conditional volatility from the model
@@ -378,19 +364,19 @@ def makePlot(ax, model_data, fitted_model_result, category):
     else: print('category not recognised.')
 
 # Fit the model first
-model1_fit_result = fitGarchModel(logr_1, best_fit_model_data1)
-model2_fit_result = fitGarchModel(logr_1, best_fit_model_data2) 
+model1_fit_result = fit_garch_model(logr_1, best_fit_model_data1)
+model2_fit_result = fit_garch_model(logr_1, best_fit_model_data2) 
        
 # Define a function to make the fist row of required plots using the function above
-def makeRow(fitted_model_result, model_data, rowNumber):
-    [makePlot(axes[rowNumber-1,i], model_data, fitted_model_result, i+1) for i in range(5)]
+def make_row(fitted_model_result, model_data, rowNumber):
+    [make_plot(axes[rowNumber-1,i], model_data, fitted_model_result, i+1) for i in range(5)]
 
 # Plot everything
 # Set the size and number of slots of the canvas
 fig, axes = plt.subplots(nrows=2,ncols=5,figsize=(30, 9)) 
 plt.subplots_adjust(hspace=0.3) # set the wide between the gap    
-makeRow(model1_fit_result, best_fit_model_data1, 1) # Plot the first row
-makeRow(model2_fit_result, best_fit_model_data2, 2) # Plot the second row
+make_row(model1_fit_result, best_fit_model_data1, 1) # Plot the first row
+make_row(model2_fit_result, best_fit_model_data2, 2) # Plot the second row
 
 # Draw conclusions and print the comments
 print('From the plots above I conclude:' + '\n' + 
@@ -404,7 +390,7 @@ print('From the plots above I conclude:' + '\n' +
 # =============================================================================
 # Define a function to conduct ARCH LM test
 # fitted_model_result: the result of fitted model stored previously
-def testARCHLM(model_data, fitted_model_result, sigLevel):
+def test_arch_lm(model_data, fitted_model_result, sigLevel):
     
     # Derive model data for printing
     ticker = model_data.Ticker
@@ -448,8 +434,8 @@ def testARCHLM(model_data, fitted_model_result, sigLevel):
               str(m) + ')-GJR-GARCH(' + str(p) + ',' + str(o) + ',' + str(q) + ') model for stock ' + ticker + '.')
 
 # Test for LM 
-testARCHLM(best_fit_model_data1, model1_fit_result, 0.05)
-testARCHLM(best_fit_model_data2, model2_fit_result, 0.05)
+test_arch_lm(best_fit_model_data1, model1_fit_result, 0.05)
+test_arch_lm(best_fit_model_data2, model2_fit_result, 0.05)
 
 print('\n' + 'From the LM test above I conclude:' + '\n' + 
       'The volatility of CRM is not fully captured by the GARCH model, and that of WBA is well captured.' )
