@@ -31,7 +31,9 @@ total = len(df.index)
 
 # F1
 L1 = ['SIZE', 'PRICE', 'NBO', 'NBB', 'NBOqty', 'NBBqty']
-[df.drop(df[df[i] <= 0].index, inplace = True) for i in L1]
+for i in L1:
+    df.drop(df[df[i] <= 0].index, inplace=True)
+
 F1 = total - len(df.index)
 
 # F2
