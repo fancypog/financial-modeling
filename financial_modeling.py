@@ -333,10 +333,10 @@ def make_plot(ax, model_data, fitted_model_result, category):
     q = model_data.q
     # 1) Time series of the standardised residuals
     if category in ['TS_stdresid', 1]:
-        sns.lineplot(data = stdresid, ax=ax)
-        ax.set_title('AR(' + str(m) + ')-GJR-GARCH(' + str(p) + ',' + str(o) + ',' + str(q) + \
-                      ') ' + 'Standardized residuals-' + ticker)
-        ax.tick_params(axis='x', labelrotation = 30) #rotate x label a bit so it doesn't look crowded
+        sns.lineplot(data=stdresid, ax=ax)
+        ax.set_title(f"AR({m})-GJR-GARCH({p},{o},{q}) Standardized residuals-{ticker}")
+        ax.tick_params(axis='x', labelrotation=30)  # rotate x label a bit so it doesn't look crowded
+
     # 2) Histogram of the standardised residuals
     elif category in ['His_stdresid', 2]:
        # Get the degree of freedom
@@ -428,11 +428,9 @@ def test_arch_lm(model_data, fitted_model_result, sigLevel):
 
     # Compare and print the results    
     if p_value < sigLevel:
-        print('There are some remaining ARCH effects up to order 10 left in the standardized residuals of the AR(' \
-              + str(m) + ')-GJR-GARCH(' + str(p) + ',' + str(o) + ',' + str(q) + ') model for stock ' + ticker + '.')
+        print(f"There are some remaining ARCH effects up to order 10 left in the standardized residuals of the AR({m})-GJR-GARCH({p},{o},{q}) model for stock {ticker}.")
     else:
-        print('There are no ARCH effects up to order 10 left in the standardized residuals of the AR(' + \
-              str(m) + ')-GJR-GARCH(' + str(p) + ',' + str(o) + ',' + str(q) + ') model for stock ' + ticker + '.')
+        print(f"There are no ARCH effects up to order 10 left in the standardized residuals of the AR({m})-GJR-GARCH({p},{o},{q}) model for stock {ticker}.")
 
 # Test for LM 
 test_arch_lm(best_fit_model_data1, model1_fit_result, 0.05)
